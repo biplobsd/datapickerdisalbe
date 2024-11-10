@@ -10,18 +10,23 @@ class TrialClassCalendar extends StatelessWidget {
     required this.jobEndDate,
   });
 
-  bool isMonthInRange(DateTime startDate, DateTime endDate, int month) {
+  bool isMonthInRange(
+      DateTime startDate, DateTime endDate, int month, int year) {
     if (startDate.isAfter(endDate)) {
       throw ArgumentError('startDate should be before endDate');
     }
-    int startMonth = startDate.month;
-    int endMonth = endDate.month;
 
-    if (startDate.year == endDate.year) {
-      return month >= startMonth && month <= endMonth;
-    } else {
-      return month >= startMonth || month <= endMonth;
+    if (year < startDate.year || year > endDate.year) return false;
+
+    if (year == startDate.year && year == endDate.year) {
+      return month >= startDate.month && month <= endDate.month;
+    } else if (year == startDate.year) {
+      return month >= startDate.month;
+    } else if (year == endDate.year) {
+      return month <= endDate.month;
     }
+
+    return true;
   }
 
   @override
@@ -40,7 +45,7 @@ class TrialClassCalendar extends StatelessWidget {
     return CalendarDatePicker2(
       config: CalendarDatePicker2Config(
         selectableMonthPredicate: (year, month) =>
-            isMonthInRange(firstDate, lastDate, month),
+            isMonthInRange(firstDate, lastDate, month, year),
         selectedDayHighlightColor: Colors.blue,
         weekdayLabels: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
         weekdayLabelTextStyle: const TextStyle(
